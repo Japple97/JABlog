@@ -25,5 +25,7 @@ namespace JABlog.Models
 
         [NotMapped]
         public virtual IFormFile? ImageFile { get; set; }
+
+        public virtual ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
     }
 }
