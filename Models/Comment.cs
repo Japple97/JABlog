@@ -4,6 +4,7 @@ namespace JABlog.Models
 {
     public class Comment
     {
+        //Primary Key
         public int Id { get; set; }
 
         [Required]
@@ -11,18 +12,24 @@ namespace JABlog.Models
         [StringLength(5000, ErrorMessage = "The {0} must be at least {2} and at the most {1} characters", MinimumLength = 2)]
         public string? Body { get; set; }
 
+        [DataType(DataType.DateTime)]
         public DateTime Created { get; set; }
+
+        [DataType(DataType.DateTime)]
         public DateTime? Updated { get; set; }
 
         [StringLength(200, ErrorMessage = "The {0} must be at least {2} and at the most {1} characters", MinimumLength = 2)]
         public string? UpdateReason { get; set; }
 
 
-        // navigation properties
+        // navigation properties / foreign keys
+
+        //1-1 relationship
         public int BlogPostId { get; set; }
 
         public virtual BlogPost? BlogPost { get; set; }
 
+        // 1-to-many relationship 
         [Required]
         public string? AuthorId { get; set; }
         public virtual BlogUser? Author { get; set; }

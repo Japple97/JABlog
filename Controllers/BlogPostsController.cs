@@ -7,26 +7,38 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using JABlog.Data;
 using JABlog.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace JABlog.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class BlogPostsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<BlogUser> _userManager;
 
-        public BlogPostsController(ApplicationDbContext context)
+        public BlogPostsController(ApplicationDbContext context, UserManager<BlogUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: BlogPosts
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
+            string userId = _userManager.GetUserId(User)!;
+
+
+
+
             var applicationDbContext = _context.BlogPosts.Include(b => b.Category);
             return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: BlogPosts/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.BlogPosts == null)
@@ -48,28 +60,41 @@ namespace JABlog.Controllers
         // GET: BlogPosts/Create
         public IActionResult Create()
         {
+            string userId = _userManager.GetUserId(User)!;
+
+            ViewData["Tags"] = new MultiSelectList(_context.Tags, "Id", "Name");
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
             return View();
         }
 
         // POST: BlogPosts/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.     
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,Abstract,Content,Created,Updated,Slug,IsDeleted,IsPublished,ImageData,ImageType,CategoryId")] BlogPost blogPost)
         {
+            
             if (ModelState.IsValid)
             {
+                //TODO: Slug Blogpost
+
+                //Format Dates
+                blogPost.Updated = DateTime.UtcNow;
+                blogPost.Created = DataUtility.GetPostGresDate(blogPost.Created);
+
                 _context.Add(blogPost);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+
+            ViewData["Tags"] = new MultiSelectList(_context.Tags, "Id", "Name", blogPost.Tags);
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", blogPost.CategoryId);
             return View(blogPost);
         }
 
-        // GET: BlogPosts/Edit/5
+        // GET: BlogPosts/Edit/5   
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.BlogPosts == null)
@@ -82,13 +107,18 @@ namespace JABlog.Controllers
             {
                 return NotFound();
             }
+
+            string userId = _userManager.GetUserId(User)!;
+
+
+            ViewData["Tags"] = new MultiSelectList(_context.Tags, "Id", "Name", blogPost.Tags);
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", blogPost.CategoryId);
             return View(blogPost);
         }
 
         // POST: BlogPosts/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.   
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Abstract,Content,Created,Updated,Slug,IsDeleted,IsPublished,ImageData,ImageType,CategoryId")] BlogPost blogPost)
@@ -102,6 +132,9 @@ namespace JABlog.Controllers
             {
                 try
                 {
+                    blogPost.Created = DataUtility.GetPostGresDate(blogPost.Created);
+                    blogPost.Updated = DataUtility.GetPostGresDate(DateTime.UtcNow);
+
                     _context.Update(blogPost);
                     await _context.SaveChangesAsync();
                 }
@@ -118,6 +151,7 @@ namespace JABlog.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["Tags"] = new MultiSelectList(_context.Tags, "Id", "Name", blogPost.Tags);
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", blogPost.CategoryId);
             return View(blogPost);
         }

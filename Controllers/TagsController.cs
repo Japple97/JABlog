@@ -7,22 +7,30 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using JABlog.Data;
 using JABlog.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace JABlog.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class TagsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<BlogUser> _userManager;
 
-        public TagsController(ApplicationDbContext context)
+        public TagsController(ApplicationDbContext context, UserManager<BlogUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Tags
         public async Task<IActionResult> Index()
         {
-              return _context.Tags != null ? 
+            string userId = _userManager.GetUserId(User)!;
+
+
+            return _context.Tags != null ? 
                           View(await _context.Tags.ToListAsync()) :
                           Problem("Entity set 'ApplicationDbContext.Tags'  is null.");
         }

@@ -5,6 +5,7 @@ namespace JABlog.Models
 {
     public class BlogPost
     {
+        //Primary Key
         public int Id { get; set; }
 
         [Required]
@@ -17,10 +18,10 @@ namespace JABlog.Models
         [Required]
         public string? Content { get; set; }
 
-        [DataType(DataType.Date)]
+        [DataType(DataType.DateTime)]
         public DateTime Created { get; set; }
 
-        [DataType(DataType.Date)]
+        [DataType(DataType.DateTime)]
         public DateTime Updated { get; set; }
 
 
@@ -41,12 +42,17 @@ namespace JABlog.Models
         public virtual IFormFile? ImageFile { get; set; }
 
 
-        // navigation properties
-        
+       
+        //Foreign Key 1-to-1
         public int CategoryId { get; set; }
+
+        // navigation properties
         public virtual Category? Category { get; set; }
 
+        // Many-to-Many
         public virtual ICollection<Tag> Tags { get; set; } = new HashSet<Tag>();
+
+        // 1-to-Many 
         public virtual ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
 
 

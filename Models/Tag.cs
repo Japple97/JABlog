@@ -12,6 +12,7 @@ namespace JABlog.Models
         public string? Name { get; set; }
 
         // navigation properties
+        // Many-to-Many
         public virtual ICollection<BlogPost> BlogPosts { get; set; } = new HashSet<BlogPost>();
     }
 }
