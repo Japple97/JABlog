@@ -37,6 +37,17 @@ namespace JABlog.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
+        public async Task<IActionResult> AdminPage()
+        {
+            
+            var blogPost = _context.BlogPosts.Include(b => b.Category);
+            return View(await blogPost.ToListAsync());
+        }
+
+
+
+
+
         // GET: BlogPosts/Details/5
         [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
@@ -81,7 +92,7 @@ namespace JABlog.Controllers
 
                 //Format Dates
                 blogPost.Updated = DateTime.UtcNow;
-                blogPost.Created = DataUtility.GetPostGresDate(blogPost.Created);
+                blogPost.Created = DateTime.UtcNow;
 
                 _context.Add(blogPost);
                 await _context.SaveChangesAsync();

@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<JABlog.Models.BlogPost>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Post Index";
 }
 
-<h1>Index</h1>
+<h1>List of Blogs</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -30,12 +30,12 @@
             <th>
                 @Html.DisplayNameFor(model => model.Slug)
             </th>
-            <th>
+@*            <th>
                 @Html.DisplayNameFor(model => model.IsDeleted)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.IsPublished)
-            </th>
+            </th>*@
             <th>
                 @Html.DisplayNameFor(model => model.ImageData)
             </th>
@@ -72,12 +72,12 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Slug)
             </td>
-            <td>
+   @*         <td>
                 @Html.DisplayFor(modelItem => item.IsDeleted)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.IsPublished)
-            </td>
+            </td>*@
             <td>
                 @Html.DisplayFor(modelItem => item.ImageData)
             </td>
