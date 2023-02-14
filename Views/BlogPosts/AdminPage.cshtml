@@ -39,13 +39,18 @@
                                         <h6 class="post-author-name">
                                             <a class="hover-flip-item-wrapper" href="author.html">
                                                 <span class="hover-flip-item">
-                                                    <span data-text="Antonio Raynor">Antonio Raynor</span>
+                                                    <span data-text="Jacob Apple">Jacob Apple</span>
                                                 </span>
                                             </a>
                                         </h6>
                                         <ul class="post-meta-list">
                                             <li>@blogPost.Created.ToString("MMM dd, yyyy")</li>
                                             <li>@blogPost.Comments.Count Comments</li>
+                                            <li>
+                                            <a asp-controller="BlogPosts" asp-action="Edit" asp-route-id="@blogPost.Id">Edit</a> |
+                                            <a asp-controller="BlogPosts" asp-action="Details" asp-route-id="@blogPost.Id">Details</a> |
+                                            <a asp-controller="BlogPosts" asp-action="Delete" asp-route-id="@blogPost.Id">Delete</a>
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>
