@@ -1,4 +1,8 @@
 ﻿@model IEnumerable<JABlog.Models.BlogPost>
+@using JABlog.Enums;
+@using JABlog.Services.Interfaces
+
+@inject IImageService _ImageService
 
 <div class="axil-post-list-area axil-section-gap bg-color-white">
     <div class="container">
@@ -15,7 +19,7 @@
                     <div class="content-block post-list-view mt--30">
                         <div class="post-thumbnail">
                             <a asp-controller="BlogPosts" asp-action="Details" asp-route-slug="@blogPost.Slug">
-                                <img src="" alt="Post Images" />
+                                <img src="@_ImageService.ConvertByteArrayToFile(blogPost.ImageData!,blogPost.ImageType!,(int)DefaultImage.BlogPostImage)" alt="Post Images" />
                             </a>
                         </div>
                         <div class="post-content">

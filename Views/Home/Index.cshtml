@@ -1,5 +1,8 @@
 ﻿@model IEnumerable<JABlog.Models.BlogPost>
+@using JABlog.Enums;
+@using JABlog.Services.Interfaces
 
+@inject IImageService _ImageService
 @{
     ViewData["Title"] = "Home";
 }
@@ -42,7 +45,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="page-title">
-                    <h2 class="title mb--40">Articles By This Author</h2>
+                    <h2 class="title mb--40">Articles written by Jacob Apple</h2>
                 </div>
             </div>
             <div class="col-lg-8 col-xl-8">
@@ -54,7 +57,7 @@
                     <div class="content-block post-list-view mt--30">
                         <div class="post-thumbnail">
                             <a href="post-details.html">
-                                <img src="~/assets/images/post-images/post-list-02.jpg" alt="Post Images">
+                                <img src="@_ImageService.ConvertByteArrayToFile(blogPost.ImageData!,blogPost.ImageType!,(int)DefaultImage.BlogPostImage)" alt="Post Images">
                             </a>
                         </div>
                         <div class="post-content">
@@ -62,7 +65,7 @@
                                 <div class="post-cat-list">
                                     <a class="hover-flip-item-wrapper" href="#">
                                         <span class="hover-flip-item">
-                                            <span data-text="@blogPost.Category.Name">@blogPost.Category.Name</span>
+                                            <span data-text="@blogPost.Category!.Name">@blogPost.Category.Name</span>
                                         </span>
                                     </a>
                                 </div>

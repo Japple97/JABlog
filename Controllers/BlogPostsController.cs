@@ -9,6 +9,7 @@ using JABlog.Data;
 using JABlog.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using JABlog.Services.Interfaces;
 
 namespace JABlog.Controllers
 {
@@ -17,11 +18,15 @@ namespace JABlog.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<BlogUser> _userManager;
+        private readonly IImageService _imageService;
 
-        public BlogPostsController(ApplicationDbContext context, UserManager<BlogUser> userManager)
+        public BlogPostsController(ApplicationDbContext context,
+                                   UserManager<BlogUser> userManager,
+                                   IImageService imageService)
         {
             _context = context;
             _userManager = userManager;
+            _imageService = imageService;
         }
 
         // GET: BlogPosts
@@ -71,11 +76,10 @@ namespace JABlog.Controllers
         // GET: BlogPosts/Create
         public IActionResult Create()
         {
-            string userId = _userManager.GetUserId(User)!;
 
             ViewData["Tags"] = new MultiSelectList(_context.Tags, "Id", "Name");
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
-            return View();
+            return View(new BlogPost());
         }
 
         // POST: BlogPosts/Create
@@ -83,7 +87,7 @@ namespace JABlog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.     
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Abstract,Content,Created,Updated,Slug,IsDeleted,IsPublished,ImageData,ImageType,CategoryId")] BlogPost blogPost)
+        public async Task<IActionResult> Create([Bind("Id,Title,Abstract,Content,Created,Updated,Slug,IsDeleted,IsPublished,ImageFile,CategoryId")] BlogPost blogPost)
         {
             
             if (ModelState.IsValid)
@@ -93,6 +97,14 @@ namespace JABlog.Controllers
                 //Format Dates
                 blogPost.Updated = DateTime.UtcNow;
                 blogPost.Created = DateTime.UtcNow;
+
+                if (blogPost.ImageFile != null)
+                {
+                    blogPost.ImageData = await _imageService.ConvertFileToByteArrayAsync(blogPost.ImageFile);
+                    blogPost.ImageType = blogPost.ImageFile.ContentType;
+                }
+
+
 
                 _context.Add(blogPost);
                 await _context.SaveChangesAsync();
@@ -132,7 +144,7 @@ namespace JABlog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.   
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Abstract,Content,Created,Updated,Slug,IsDeleted,IsPublished,ImageData,ImageType,CategoryId")] BlogPost blogPost)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Abstract,Content,Created,Updated,Slug,IsDeleted,IsPublished,ImageFile,CategoryId")] BlogPost blogPost)
         {
             if (id != blogPost.Id)
             {
@@ -145,7 +157,11 @@ namespace JABlog.Controllers
                 {
                     blogPost.Created = DataUtility.GetPostGresDate(blogPost.Created);
                     blogPost.Updated = DataUtility.GetPostGresDate(DateTime.UtcNow);
-
+                    if (blogPost.ImageFile != null)
+                    {
+                        blogPost.ImageData = await _imageService.ConvertFileToByteArrayAsync(blogPost.ImageFile);
+                        blogPost.ImageType = blogPost.ImageFile.ContentType;
+                    }
                     _context.Update(blogPost);
                     await _context.SaveChangesAsync();
                 }
