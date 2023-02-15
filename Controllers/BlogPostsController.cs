@@ -10,61 +10,48 @@ using JABlog.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using JABlog.Services.Interfaces;
+using System.Runtime.InteropServices;
 
 namespace JABlog.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class BlogPostsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+       // private readonly ApplicationDbContext _context;
         private readonly UserManager<BlogUser> _userManager;
         private readonly IImageService _imageService;
+        private readonly IBlogPostService _blogPostService;
 
         public BlogPostsController(ApplicationDbContext context,
                                    UserManager<BlogUser> userManager,
-                                   IImageService imageService)
+                                   IImageService imageService,
+                                   IBlogPostService blogPostService)
         {
             _context = context;
             _userManager = userManager;
             _imageService = imageService;
+            _blogPostService = blogPostService;
         }
 
         // GET: BlogPosts
-        [AllowAnonymous]
-        public async Task<IActionResult> Index()
-        {
-            string userId = _userManager.GetUserId(User)!;
-
-
-
-
-            var applicationDbContext = _context.BlogPosts.Include(b => b.Category);
-            return View(await applicationDbContext.ToListAsync());
-        }
-
         public async Task<IActionResult> AdminPage()
         {
-            
-            var blogPost = _context.BlogPosts.Include(b => b.Category);
-            return View(await blogPost.ToListAsync());
+
+            var blogPosts = await _blogPostService.GetAllBlogPostsAsync();
+            return View(blogPosts);
         }
-
-
-
-
 
         // GET: BlogPosts/Details/5
         [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.BlogPosts == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var blogPost = await _context.BlogPosts
-                .Include(b => b.Category)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var blogPost = await _blogPostService.GetBlogPostByIdAsync(id.Value);
+
             if (blogPost == null)
             {
                 return NotFound();
@@ -74,11 +61,12 @@ namespace JABlog.Controllers
         }
 
         // GET: BlogPosts/Create
-        public IActionResult Create()
+        public async IActionResult Create()
         {
 
             ViewData["Tags"] = new MultiSelectList(_context.Tags, "Id", "Name");
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+
+            ViewData["CategoryId"] = new SelectList(await _blogPostService.GetAllCategoriesAsync(), "Id", "Name");
             return View(new BlogPost());
         }
 
@@ -104,10 +92,7 @@ namespace JABlog.Controllers
                     blogPost.ImageType = blogPost.ImageFile.ContentType;
                 }
 
-
-
-                _context.Add(blogPost);
-                await _context.SaveChangesAsync();
+                await _blogPostService.AddBlogPostAsync(blogPost);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -162,12 +147,11 @@ namespace JABlog.Controllers
                         blogPost.ImageData = await _imageService.ConvertFileToByteArrayAsync(blogPost.ImageFile);
                         blogPost.ImageType = blogPost.ImageFile.ContentType;
                     }
-                    _context.Update(blogPost);
-                    await _context.SaveChangesAsync();
+                    await _blogPostService.UpdateBlogPostAsync(blogPost);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BlogPostExists(blogPost.Id))
+                    if (!await BlogPostExists(blogPost.Id))
                     {
                         return NotFound();
                     }
@@ -186,7 +170,7 @@ namespace JABlog.Controllers
         // GET: BlogPosts/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.BlogPosts == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -207,23 +191,23 @@ namespace JABlog.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.BlogPosts == null)
-            {
+            if (id == null)
+                {
                 return Problem("Entity set 'ApplicationDbContext.BlogPosts'  is null.");
             }
-            var blogPost = await _context.BlogPosts.FindAsync(id);
+            var blogPost = await _blogPostService.GetBlogPostByIdAsync(id);
+
             if (blogPost != null)
             {
-                _context.BlogPosts.Remove(blogPost);
+              await _blogPostService.DeleteBlogPostAsync(blogPost);
             }
             
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool BlogPostExists(int id)
+        private async Task<bool> BlogPostExists(int id)
         {
-          return (_context.BlogPosts?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (await _blogPostService.GetAllBlogPostsAsync()).Any(e => e.Id == id);
         }
     }
 }

@@ -1,5 +1,8 @@
 ﻿@model IEnumerable<JABlog.Models.BlogPost>
+@using JABlog.Enums;
+@using JABlog.Services.Interfaces
 
+@inject IImageService _ImageService
 @{
     ViewData["Title"] = "Post Index";
 }
@@ -27,9 +30,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Updated)
             </th>
-            <th>
+@*            <th>
                 @Html.DisplayNameFor(model => model.Slug)
-            </th>
+            </th>*@
 @*            <th>
                 @Html.DisplayNameFor(model => model.IsDeleted)
             </th>
@@ -39,9 +42,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.ImageData)
             </th>
-            <th>
+@*            <th>
                 @Html.DisplayNameFor(model => model.ImageType)
-            </th>
+            </th>*@
             <th>
                 @Html.DisplayNameFor(model => model.Category)
             </th>  
@@ -69,9 +72,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Updated)
             </td>
-            <td>
+@*            <td>
                 @Html.DisplayFor(modelItem => item.Slug)
-            </td>
+            </td>*@
    @*         <td>
                 @Html.DisplayFor(modelItem => item.IsDeleted)
             </td>
@@ -79,13 +82,13 @@
                 @Html.DisplayFor(modelItem => item.IsPublished)
             </td>*@
             <td>
-                @Html.DisplayFor(modelItem => item.ImageData)
+               <img src="@_ImageService.ConvertByteArrayToFile(item.ImageData!,item.ImageType!,(int)DefaultImage.BlogPostImage)" />
             </td>
-            <td>
+@*            <td>
                 @Html.DisplayFor(modelItem => item.ImageType)
-            </td>
+            </td>*@
             <td>
-                @Html.DisplayFor(modelItem => item.Category.Name)
+                @Html.DisplayFor(modelItem => item.Category!.Name)
             </td> 
             <td>
                 @Html.DisplayFor(modelItem => item.Tags)

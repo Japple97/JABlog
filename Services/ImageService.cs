@@ -2,8 +2,6 @@
 
 namespace JABlog.Services
 {
-    namespace ContactProJA.Services
-    {
         public class ImageService : IImageService
         {
             private readonly string _defaultUserImage = "/img/DefaultUserImage.jpg";
@@ -55,4 +53,3 @@ namespace JABlog.Services
             }
         }
     }
-}

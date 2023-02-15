@@ -9,6 +9,7 @@ using JABlog.Data;
 using JABlog.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using JABlog.Services.Interfaces;
 
 namespace JABlog.Controllers
 {
@@ -17,11 +18,13 @@ namespace JABlog.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<BlogUser> _userManager;
+        private readonly IBlogPostService _blogPostService;
 
-        public CategoriesController(ApplicationDbContext context, UserManager<BlogUser> userManager)
+        public CategoriesController(ApplicationDbContext context, UserManager<BlogUser> userManager, IBlogPostService blogPostService)
         {
             _context = context;
             _userManager = userManager;
+            _blogPostService = blogPostService;
         }
 
         // GET: Categories
@@ -69,8 +72,7 @@ namespace JABlog.Controllers
             if (ModelState.IsValid)
             {
                 string userId = _userManager.GetUserId(User)!;
-                _context.Add(category);
-                await _context.SaveChangesAsync();
+                await _blogPostService.AddCategoryAsync(category);
                 return RedirectToAction(nameof(Index));
             }
             return View(category);
@@ -157,10 +159,10 @@ namespace JABlog.Controllers
             var category = await _context.Categories.FindAsync(id);
             if (category != null)
             {
-                _context.Categories.Remove(category);
+                await _blogPostService.DeleteCategoryAsync(category);
             }
             
-            await _context.SaveChangesAsync();
+            
             return RedirectToAction(nameof(Index));
         }
 

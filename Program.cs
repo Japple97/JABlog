@@ -1,6 +1,6 @@
 using JABlog.Data;
 using JABlog.Models;
-using JABlog.Services.ContactProJA.Services;
+using JABlog.Services;
 using JABlog.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +22,7 @@ builder.Services.AddIdentity<BlogUser, IdentityRole>(options => options.SignIn.R
 
 //Custome Services
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IBlogPostService, BlogPostService>();
 
 
 builder.Services.AddMvc();

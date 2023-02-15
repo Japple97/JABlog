@@ -9,6 +9,7 @@ using JABlog.Data;
 using JABlog.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using JABlog.Services.Interfaces;
 
 namespace JABlog.Controllers
 {
@@ -17,17 +18,18 @@ namespace JABlog.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<BlogUser> _userManager;
+        private readonly IBlogPostService _blogPostService;
 
-        public TagsController(ApplicationDbContext context, UserManager<BlogUser> userManager)
+        public TagsController(ApplicationDbContext context, UserManager<BlogUser> userManager, IBlogPostService blogPostService)
         {
             _context = context;
             _userManager = userManager;
+            _blogPostService = blogPostService;
         }
 
         // GET: Tags
         public async Task<IActionResult> Index()
         {
-            string userId = _userManager.GetUserId(User)!;
 
 
             return _context.Tags != null ? 
@@ -68,8 +70,7 @@ namespace JABlog.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(tag);
-                await _context.SaveChangesAsync();
+                await _blogPostService.AddTagAsync(tag);
                 return RedirectToAction(nameof(Index));
             }
             return View(tag);
@@ -156,10 +157,9 @@ namespace JABlog.Controllers
             var tag = await _context.Tags.FindAsync(id);
             if (tag != null)
             {
-                _context.Tags.Remove(tag);
+                await _blogPostService.DeleteTagAsync(tag);
             }
-            
-            await _context.SaveChangesAsync();
+                      
             return RedirectToAction(nameof(Index));
         }
 
