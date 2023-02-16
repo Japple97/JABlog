@@ -33,7 +33,7 @@ namespace JABlog.Services.Interfaces
         #endregion
 
         public Task<IEnumerable<Category>> GetAllCategoriesAsync();
-
+        public Task<IEnumerable<Tag>> GetAllTagsAsync();
 
         #region Tag CRUD
         public Task AddTagAsync(Tag tag);

@@ -17,7 +17,7 @@ namespace JABlog.Controllers
     [Authorize(Roles = "Admin")]
     public class BlogPostsController : Controller
     {
-       // private readonly ApplicationDbContext _context;
+
         private readonly UserManager<BlogUser> _userManager;
         private readonly IImageService _imageService;
         private readonly IBlogPostService _blogPostService;
@@ -26,8 +26,7 @@ namespace JABlog.Controllers
                                    UserManager<BlogUser> userManager,
                                    IImageService imageService,
                                    IBlogPostService blogPostService)
-        {
-            _context = context;
+        {           
             _userManager = userManager;
             _imageService = imageService;
             _blogPostService = blogPostService;
@@ -61,11 +60,10 @@ namespace JABlog.Controllers
         }
 
         // GET: BlogPosts/Create
-        public async IActionResult Create()
+        public async Task<IActionResult> Create()
         {
 
-            ViewData["Tags"] = new MultiSelectList(_context.Tags, "Id", "Name");
-
+            ViewData["Tags"] = new MultiSelectList(await _blogPostService.GetAllTagsAsync(), "Id", "Name");
             ViewData["CategoryId"] = new SelectList(await _blogPostService.GetAllCategoriesAsync(), "Id", "Name");
             return View(new BlogPost());
         }
@@ -97,20 +95,20 @@ namespace JABlog.Controllers
             }
 
 
-            ViewData["Tags"] = new MultiSelectList(_context.Tags, "Id", "Name", blogPost.Tags);
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", blogPost.CategoryId);
+            ViewData["Tags"] = new MultiSelectList(await _blogPostService.GetAllTagsAsync(), "Id", "Name", blogPost.Tags);
+            ViewData["CategoryId"] = new SelectList(await _blogPostService.GetAllCategoriesAsync(), "Id", "Name", blogPost.CategoryId);
             return View(blogPost);
         }
 
         // GET: BlogPosts/Edit/5   
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.BlogPosts == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var blogPost = await _context.BlogPosts.FindAsync(id);
+            var blogPost = await _blogPostService.GetBlogPostByIdAsync((int)id);
             if (blogPost == null)
             {
                 return NotFound();
@@ -119,8 +117,8 @@ namespace JABlog.Controllers
             string userId = _userManager.GetUserId(User)!;
 
 
-            ViewData["Tags"] = new MultiSelectList(_context.Tags, "Id", "Name", blogPost.Tags);
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", blogPost.CategoryId);
+            ViewData["Tags"] = new MultiSelectList(await _blogPostService.GetAllTagsAsync(), "Id", "Name", blogPost.Tags);
+            ViewData["CategoryId"] = new SelectList(await _blogPostService.GetAllCategoriesAsync(), "Id", "Name", blogPost.CategoryId);
             return View(blogPost);
         }
 
@@ -162,8 +160,8 @@ namespace JABlog.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Tags"] = new MultiSelectList(_context.Tags, "Id", "Name", blogPost.Tags);
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", blogPost.CategoryId);
+            ViewData["Tags"] = new MultiSelectList(await _blogPostService.GetAllTagsAsync(), "Id", "Name", blogPost.Tags);
+            ViewData["CategoryId"] = new SelectList(await _blogPostService.GetAllCategoriesAsync(), "Id", "Name", blogPost.CategoryId);
             return View(blogPost);
         }
 
@@ -175,9 +173,8 @@ namespace JABlog.Controllers
                 return NotFound();
             }
 
-            var blogPost = await _context.BlogPosts
-                .Include(b => b.Category)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var blogPost = await _blogPostService.GetBlogPostByIdAsync((int)id);
+            
             if (blogPost == null)
             {
                 return NotFound();
@@ -192,7 +189,7 @@ namespace JABlog.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (id == null)
-                {
+            {
                 return Problem("Entity set 'ApplicationDbContext.BlogPosts'  is null.");
             }
             var blogPost = await _blogPostService.GetBlogPostByIdAsync(id);

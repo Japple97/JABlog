@@ -98,6 +98,19 @@ namespace JABlog.Services
                 throw;
             }
         }
+        public async Task<IEnumerable<Tag>> GetAllTagsAsync()
+        {
+            try
+            {
+                IEnumerable<Tag> tags = await _context.Tags.ToListAsync();
+                return tags;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
 
         public async Task<IEnumerable<BlogPost>> GetAllBlogPostsAsync()
         {
@@ -145,7 +158,8 @@ namespace JABlog.Services
         {
             try
             {
-                IEnumerable<> blogPosts = await _context.BlogPosts.Include(b => b.Category)
+                IEnumerable<Category> categories = await _context.Categories.Include(c => c.BlogPosts).ToListAsync();
+                return categories;
             }
             catch (Exception)
             {
