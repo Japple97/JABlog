@@ -29,8 +29,7 @@ namespace JABlog.Controllers
 
         // GET: Categories
         public async Task<IActionResult> Index()
-        {
-            string userId = _userManager.GetUserId(User)!;
+        {          
          
 
             return _context.Categories != null ? 

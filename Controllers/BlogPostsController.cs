@@ -114,7 +114,6 @@ namespace JABlog.Controllers
                 return NotFound();
             }
 
-            string userId = _userManager.GetUserId(User)!;
 
 
             ViewData["Tags"] = new MultiSelectList(await _blogPostService.GetAllTagsAsync(), "Id", "Name", blogPost.Tags);
@@ -158,7 +157,7 @@ namespace JABlog.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(AdminPage));
             }
             ViewData["Tags"] = new MultiSelectList(await _blogPostService.GetAllTagsAsync(), "Id", "Name", blogPost.Tags);
             ViewData["CategoryId"] = new SelectList(await _blogPostService.GetAllCategoriesAsync(), "Id", "Name", blogPost.CategoryId);
