@@ -11,8 +11,18 @@ namespace JABlog.Services.Interfaces
         public Task AddBlogPostAsync(BlogPost blogPost);
 
         public Task UpdateBlogPostAsync(BlogPost blogPost);
-
+        /// <summary>
+        /// Get a single BlogPost by Id (integer)
+        /// </summary>
+        /// <param name="blogPostId"></param>
+        /// <returns></returns>
         public Task<BlogPost> GetBlogPostByIdAsync(int blogPostId);
+        /// <summary>
+        /// Get a single BlogPost by Slug (string)
+        /// </summary>
+        /// <param name="blogPostSlug"></param>
+        /// <returns></returns>
+        public Task<BlogPost> GetBlogPostByIdAsync(string blogPostSlug);
 
         public Task DeleteBlogPostAsync(BlogPost blogPost);
         #endregion
@@ -42,5 +52,12 @@ namespace JABlog.Services.Interfaces
         public Task DeleteTagAsync(Tag tag);
         #endregion
 
+        #region Additional Methods
+        public Task AddTagsToBlogPostAsync(IEnumerable<int> tagIds, int blogPostId);
+        public Task<bool> IsTagOnBlogPostAsync(int tagId, int blogPostId);
+        public Task RemoveAllBlogPostTagsAsync(int blogPostId);
+        public IEnumerable<BlogPost> Search(string searchString);
+        public Task<bool> ValidateSlugAsync(string title, int blogId);
+        #endregion
     }
 }

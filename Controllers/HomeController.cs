@@ -1,5 +1,6 @@
 ﻿using JABlog.Data;
 using JABlog.Models;
+using JABlog.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -8,22 +9,21 @@ namespace JABlog.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ApplicationDbContext _context;
+     
         private readonly ILogger<HomeController> _logger;
+        private readonly IBlogPostService _blogPostService;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, IBlogPostService blogPostService)
         {
-            _context = context;
+           
             _logger = logger;
+            _blogPostService = blogPostService;
         }
 
         public async Task<IActionResult> Index()
         {
 
-            IEnumerable<BlogPost> model = await _context.BlogPosts
-                                                  .Include(b=>b.Category)                                          
-                                                  .Where(b=>b.IsPublished == true && b.IsDeleted == false)
-                                                  .ToListAsync();
+            IEnumerable<BlogPost> model = await _blogPostService.GetRecentPostsAsync();
 
             return View(model);
         }

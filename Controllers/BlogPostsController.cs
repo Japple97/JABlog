@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using JABlog.Services.Interfaces;
 using System.Runtime.InteropServices;
+using JABlog.Helpers;
 
 namespace JABlog.Controllers
 {
@@ -42,14 +43,14 @@ namespace JABlog.Controllers
 
         // GET: BlogPosts/Details/5
         [AllowAnonymous]
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(string? slug)
         {
-            if (id == null)
+            if (string.IsNullOrEmpty(slug))
             {
                 return NotFound();
             }
 
-            var blogPost = await _blogPostService.GetBlogPostByIdAsync(id.Value);
+            var blogPost = await _blogPostService.GetBlogPostByIdAsync(slug);
 
             if (blogPost == null)
             {
@@ -79,6 +80,16 @@ namespace JABlog.Controllers
             if (ModelState.IsValid)
             {
                 //TODO: Slug Blogpost
+                if (!await _blogPostService.ValidateSlugAsync(blogPost.Title!, blogPost.Id))
+                {
+                    ModelState.AddModelError("Title", "A similar Title or Slug is already in use.");
+                    ViewData["Tags"] = new MultiSelectList(await _blogPostService.GetAllTagsAsync(), "Id", "Name", blogPost.Tags);
+                    ViewData["CategoryId"] = new SelectList(await _blogPostService.GetAllCategoriesAsync(), "Id", "Name", blogPost.CategoryId);
+                    return View(blogPost);
+                }
+                blogPost.Slug = StringHelper.BlogSlug(blogPost.Title!);
+
+
 
                 //Format Dates
                 blogPost.Updated = DateTime.UtcNow;
@@ -144,6 +155,16 @@ namespace JABlog.Controllers
                         blogPost.ImageData = await _imageService.ConvertFileToByteArrayAsync(blogPost.ImageFile);
                         blogPost.ImageType = blogPost.ImageFile.ContentType;
                     }
+
+                    if (!await _blogPostService.ValidateSlugAsync(blogPost.Title!, blogPost.Id))
+                    {
+                        ModelState.AddModelError("Title", "A similar Title or Slug is already in use.");
+                        ViewData["Tags"] = new MultiSelectList(await _blogPostService.GetAllTagsAsync(), "Id", "Name", blogPost.Tags);
+                        ViewData["CategoryId"] = new SelectList(await _blogPostService.GetAllCategoriesAsync(), "Id", "Name", blogPost.CategoryId);
+                        return View(blogPost);
+                    }
+                    blogPost.Slug = StringHelper.BlogSlug(blogPost.Title!);
+
                     await _blogPostService.UpdateBlogPostAsync(blogPost);
                 }
                 catch (DbUpdateConcurrencyException)

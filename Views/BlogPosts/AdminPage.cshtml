@@ -52,7 +52,7 @@
                                             <li>@blogPost.Comments.Count Comments</li>
                                             <li>
                                                 <a asp-controller="BlogPosts" asp-action="Edit" asp-route-id="@blogPost.Id">Edit</a> |
-                                                <a asp-controller="BlogPosts" asp-action="Details" asp-route-id="@blogPost.Id">Details</a> |
+                                                <a asp-controller="BlogPosts" asp-action="Details" asp-route-slug="@blogPost.Slug">Details</a> |
                                                 <a asp-controller="BlogPosts" asp-action="Delete" asp-route-id="@blogPost.Id">Delete</a>
                                             </li>
                                         </ul>
