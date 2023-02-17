@@ -103,7 +103,8 @@ namespace JABlog.Services
         {
             try
             {
-                IEnumerable<Tag> tags = await _context.Tags.ToListAsync();
+                IEnumerable<Tag> tags = await _context.Tags.Include(t=>t.BlogPosts).ToListAsync();
+
                 return tags;
             }
             catch (Exception)
@@ -285,15 +286,64 @@ namespace JABlog.Services
         {
             throw new NotImplementedException();
         }
+        public async Task AddTagsToBlogPostAsync(string stringTags, int blogPostId)
+        {
+            try
+            {
+                BlogPost? blogPost = await _context.BlogPosts.FindAsync(blogPostId);
+
+                if (blogPost == null)
+                {
+                    return;
+                }
+
+                foreach(string tagName in stringTags.Split(','))
+                {
+                    Tag? tag = await _context.Tags.FirstOrDefaultAsync(t=>t.Name.Trim().ToLower() == tagName.Trim().ToLower());
+
+                    if (tag != null)
+                    {
+                        blogPost.Tags.Add(tag);
+                    }
+                    else
+                    {
+                        Tag newTag = new Tag() { Name = tagName.Trim() };
+                        _context.Add(newTag);
+                        blogPost.Tags.Add(newTag);
+                    }
+                }
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
 
         public Task<bool> IsTagOnBlogPostAsync(int tagId, int blogPostId)
         {
             throw new NotImplementedException();
         }
 
-        public Task RemoveAllBlogPostTagsAsync(int blogPostId)
+        public async Task RemoveAllBlogPostTagsAsync(int blogPostId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                BlogPost? blogPost = await _context.BlogPosts
+                    .Include(b=>b.Tags).FirstOrDefaultAsync(b=>b.Id == blogPostId);
+                if (blogPost != null)
+                {
+                    blogPost.Tags.Clear();
+                    _context.Update(blogPost);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public IEnumerable<BlogPost> Search(string searchString)

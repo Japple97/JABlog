@@ -54,6 +54,7 @@ namespace JABlog.Services.Interfaces
 
         #region Additional Methods
         public Task AddTagsToBlogPostAsync(IEnumerable<int> tagIds, int blogPostId);
+        public Task AddTagsToBlogPostAsync(string stringTags, int blogPostId);
         public Task<bool> IsTagOnBlogPostAsync(int tagId, int blogPostId);
         public Task RemoveAllBlogPostTagsAsync(int blogPostId);
         public IEnumerable<BlogPost> Search(string searchString);

@@ -74,12 +74,12 @@ namespace JABlog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.     
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Abstract,Content,Created,Updated,Slug,IsDeleted,IsPublished,ImageFile,CategoryId")] BlogPost blogPost)
+        public async Task<IActionResult> Create([Bind("Id,Title,Abstract,Content,Created,Updated,Slug,IsDeleted,IsPublished,ImageFile,CategoryId")] BlogPost blogPost, string? stringTags)
         {
-            
+            ModelState.Remove("Slug");
             if (ModelState.IsValid)
             {
-                //TODO: Slug Blogpost
+             
                 if (!await _blogPostService.ValidateSlugAsync(blogPost.Title!, blogPost.Id))
                 {
                     ModelState.AddModelError("Title", "A similar Title or Slug is already in use.");
@@ -102,7 +102,14 @@ namespace JABlog.Controllers
                 }
 
                 await _blogPostService.AddBlogPostAsync(blogPost);
-                return RedirectToAction(nameof(Index));
+
+
+                if (!string.IsNullOrWhiteSpace(stringTags))
+                {
+                    await _blogPostService.AddTagsToBlogPostAsync(stringTags, blogPost.Id);
+                }
+
+                return RedirectToAction(nameof(AdminPage));
             }
 
 
@@ -127,7 +134,9 @@ namespace JABlog.Controllers
 
 
 
-            ViewData["Tags"] = new MultiSelectList(await _blogPostService.GetAllTagsAsync(), "Id", "Name", blogPost.Tags);
+            IEnumerable<string> tagNames = blogPost.Tags.Select(t => t.Name!);
+            ViewData["Tags"] = string.Join(",", tagNames);
+
             ViewData["CategoryId"] = new SelectList(await _blogPostService.GetAllCategoriesAsync(), "Id", "Name", blogPost.CategoryId);
             return View(blogPost);
         }
@@ -137,13 +146,13 @@ namespace JABlog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.   
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Abstract,Content,Created,Updated,Slug,IsDeleted,IsPublished,ImageFile,CategoryId")] BlogPost blogPost)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Abstract,Content,Created,Updated,Slug,IsDeleted,IsPublished,ImageFile,CategoryId")] BlogPost blogPost, string? stringTags)
         {
             if (id != blogPost.Id)
             {
                 return NotFound();
             }
-
+            
             if (ModelState.IsValid)
             {
                 try
@@ -159,13 +168,19 @@ namespace JABlog.Controllers
                     if (!await _blogPostService.ValidateSlugAsync(blogPost.Title!, blogPost.Id))
                     {
                         ModelState.AddModelError("Title", "A similar Title or Slug is already in use.");
-                        ViewData["Tags"] = new MultiSelectList(await _blogPostService.GetAllTagsAsync(), "Id", "Name", blogPost.Tags);
+                        
                         ViewData["CategoryId"] = new SelectList(await _blogPostService.GetAllCategoriesAsync(), "Id", "Name", blogPost.CategoryId);
                         return View(blogPost);
                     }
                     blogPost.Slug = StringHelper.BlogSlug(blogPost.Title!);
 
                     await _blogPostService.UpdateBlogPostAsync(blogPost);
+
+                    await _blogPostService.RemoveAllBlogPostTagsAsync(blogPost.Id);
+                    if (!string.IsNullOrWhiteSpace(stringTags))
+                    {
+                        await _blogPostService.AddTagsToBlogPostAsync(stringTags, blogPost.Id);
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -180,7 +195,8 @@ namespace JABlog.Controllers
                 }
                 return RedirectToAction(nameof(AdminPage));
             }
-            ViewData["Tags"] = new MultiSelectList(await _blogPostService.GetAllTagsAsync(), "Id", "Name", blogPost.Tags);
+            IEnumerable<string> tagNames = blogPost.Tags.Select(t => t.Name!);
+            ViewData["Tags"] = string.Join(",", tagNames);
             ViewData["CategoryId"] = new SelectList(await _blogPostService.GetAllCategoriesAsync(), "Id", "Name", blogPost.CategoryId);
             return View(blogPost);
         }
