@@ -3,7 +3,8 @@
 @{
     ViewData["Title"] = "Details";
 }
-
+<div class="row">
+    <div class="col-lg-8 col-xl-8">
 <h1>Details</h1>
 
 <div>
@@ -78,7 +79,11 @@
         </dd>
     </dl>
 </div>
+</div>
+<div class="col-lg-4 col-xl-4 mt_md--40 mt_sm--40">
+    <partial name="_Sidebar" />
+</div>
+</div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-controller="Home" asp-action="Index">Back to Home</a>
 </div>

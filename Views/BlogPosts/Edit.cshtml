@@ -3,6 +3,7 @@
 @using JABlog.Services.Interfaces
 
 @inject IImageService _ImageService
+@inject IBlogPostService _BlogPostService
 
 @{
     ViewData["Title"] = "Edit";
@@ -44,6 +45,7 @@
                     <img class="img-fluid border rounded-3 m-2" style="max-height: 250px;" src="@_ImageService.ConvertByteArrayToFile(Model.ImageData!, Model.ImageType!, (int)DefaultImage.BlogPostImage)" id="blogImage">
                     <input asp-for="ImageFile" type="file" class="form-control mt-3 pt-2" accept=".png,.jpg,.jpeg,.gif"
                            onchange="document.getElementById('blogImage').src = window.URL.createObjectURL(this.files[0])" />
+                    <span asp-validation-for="ImageFile" class="text-danger"></span>
                 </div>
             </div>
             <div class="col-12 col-lg-8">
@@ -55,6 +57,12 @@
                 <div class="form-group" id="tagContainer">
                     <label asp-for="Tags"></label>
                     <input class="form-control" type="text" id="tagInput" name="StringTags" value="@ViewBag.Tags" autocomplete="off" />
+                    <div class="tagcloud axil-single-widget mt-2">
+                        @foreach (Tag tag in await _BlogPostService.GetAllTagsAsync())
+                        {
+                            <a onclick ="addTag(this)">@tag.Name</a>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
@@ -64,7 +72,7 @@
                     <input class="form-check-input me-3" asp-for="IsPublished" />&nbsp; Publish?
                 </label>
             </div>
-            <input type="submit" value="Create" class="btn btn-primary" />
+            <input type="submit" value="Edit" class="btn btn-primary" />
         </div>
     </form>
     <div class="mt-5">
@@ -164,5 +172,31 @@
                 console.warn('Build id: xx09iayzufkn-lkt434h3lx2z');
                 console.error(error);
             });
+    </script>
+
+     <script>
+        function addTag(el) {
+            let input = document.getElementById('tagInput');
+
+            if (el.classList.contains('disabledTag'))
+            {
+                input.focus();
+                return;
+            }
+
+            let tagName = el.textContent + ', ';
+
+            let currentTags = input.value.split(',');
+
+            //remove partially entered tag
+            currentTags.pop();
+            //add the full name of the clicked tag
+            currentTags.push(tagName);
+
+            input.value = currentTags.reduce( (inputString, currentString) => inputString + ', ' + currentString.trim() );
+
+            el.classList.add('disabledTag');
+            input.focus();
+        }
     </script>
 }
