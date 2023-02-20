@@ -4,6 +4,7 @@ using JABlog.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using X.PagedList;
 
 namespace JABlog.Controllers
 {
@@ -20,13 +21,19 @@ namespace JABlog.Controllers
             _blogPostService = blogPostService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? pageNum)
         {
-
-            IEnumerable<BlogPost> model = await _blogPostService.GetRecentPostsAsync();
+            int pageSize = 3;
+            int page = pageNum ?? 1;
+            
+            IPagedList<BlogPost> model = (await _blogPostService.GetRecentPostsAsync()).ToPagedList(page,pageSize);
 
             return View(model);
         }
+
+
+
+
 
         public IActionResult Privacy()
         {
