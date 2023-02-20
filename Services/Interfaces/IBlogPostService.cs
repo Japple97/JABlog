@@ -57,7 +57,7 @@ namespace JABlog.Services.Interfaces
         public Task AddTagsToBlogPostAsync(string stringTags, int blogPostId);
         public Task<bool> IsTagOnBlogPostAsync(int tagId, int blogPostId);
         public Task RemoveAllBlogPostTagsAsync(int blogPostId);
-        public IEnumerable<BlogPost> Search(string searchString);
+        public IEnumerable<BlogPost> SearchBlogPosts(string? searchString);
         public Task<bool> ValidateSlugAsync(string title, int blogId);
         #endregion
     }

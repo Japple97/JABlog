@@ -31,6 +31,15 @@ namespace JABlog.Controllers
             return View(model);
         }
 
+        public IActionResult SearchIndex(string? searchString, int? pageNum)
+        {
+            int pageSize = 5;
+            int page = pageNum ?? 1;
+            IPagedList<BlogPost> model = (_blogPostService.SearchBlogPosts(searchString)).ToPagedList(page, pageSize);
+
+            return View(nameof(Index), model);
+        }
+
 
 
 
