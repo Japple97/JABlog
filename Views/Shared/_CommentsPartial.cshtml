@@ -8,12 +8,13 @@
 
 
 <ul class="children">
-    <!-- Start Single Comment  -->     
-    <li class="comment">
+    <!-- Start Single Comment  -->  
+
+    <li class="comment" style="border-bottom: 5px solid black">
         <div class="comment-body">
             <div class="single-comment">
                 <div class="comment-img">
-                    <img src="" alt="Author Images">
+                    <img class="comment-author-img" src=" @_ImageService.ConvertByteArrayToFile(Model.Author.ImageData!, Model.Author.ImageType!, (int)DefaultImage.BlogUserImage)" alt="Author Images">
                 </div>
                 <div class="comment-inner">
                     <h6 class="commenter">

@@ -129,7 +129,7 @@
                         <h4 class="title">@Model.Comments.Count Comments</h4>
                         <ul class="comment-list">
                             <!-- Start Single Comment  -->
-                            @foreach(var comment in Model.Comments)
+                            @foreach(var comment in Model.Comments.OrderByDescending(c=>c.Created))
                             {
                                 <partial name="_CommentsPartial" model="@comment" />
                             }                                                       

@@ -84,3 +84,8 @@ body {
 .my-page-item my-page-link li:last-child a {
     border-radius: 0 40px 40px 0;
 }
+
+.comment-author-img {
+    max-width: 100px; /* or any other value that suits your needs */
+    max-height: 100px; /* or any other value that suits your needs */
+}
