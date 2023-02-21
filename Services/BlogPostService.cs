@@ -132,7 +132,7 @@ namespace JABlog.Services
         {
             try
             {
-                BlogPost? blogPost = await _context.BlogPosts.Include(b => b.Category).Include(b => b.Tags).Include(b => b.Comments).FirstOrDefaultAsync(b => b.Id == blogPostId);
+                BlogPost? blogPost = await _context.BlogPosts.Include(b => b.Category).Include(b => b.Tags).Include(b => b.Comments).ThenInclude(c=>c.Author).FirstOrDefaultAsync(b => b.Id == blogPostId);
                 return blogPost!;
             }
             catch (Exception)
@@ -431,7 +431,7 @@ namespace JABlog.Services
         {
             try
             {
-                BlogPost? blogPost = await _context.BlogPosts.Include(b => b.Category).Include(b => b.Tags).Include(b => b.Comments).FirstOrDefaultAsync(b => b.Slug == blogPostSlug);
+                BlogPost? blogPost = await _context.BlogPosts.Include(b => b.Category).Include(b => b.Tags).Include(b => b.Comments).ThenInclude(b=>b.Author).FirstOrDefaultAsync(b => b.Slug == blogPostSlug);
                 return blogPost!;
             }
             catch (Exception)
