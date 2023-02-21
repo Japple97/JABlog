@@ -38,19 +38,20 @@ namespace JABlog.Controllers
         }
 
         // GET: Tags/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id, int? pageNum)
         {
-            if (id == null || _context.Tags == null)
+            if (_context.Tags == null)
             {
                 return NotFound();
             }
 
-            var tag = await _context.Tags
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var tag = await _blogPostService.GetTagByIdAsync(id);
             if (tag == null)
             {
                 return NotFound();
             }
+            int page = pageNum ?? 1;
+            ViewData["Page"] = page;
 
             return View(tag);
         }

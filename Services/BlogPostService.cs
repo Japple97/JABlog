@@ -253,9 +253,18 @@ namespace JABlog.Services
             }
         }
 
-        public Task<Tag> GetTagByIdAsync(int tagId)
+        public async Task<Tag> GetTagByIdAsync(int tagId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Tag? tag = await _context.Tags.Include(t => t.BlogPosts).FirstOrDefaultAsync(t => t.Id == tagId);
+                return tag!;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public async Task UpdateBlogPostAsync(BlogPost blogPost)
