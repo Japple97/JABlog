@@ -257,7 +257,7 @@ namespace JABlog.Services
         {
             try
             {
-                Tag? tag = await _context.Tags.Include(t => t.BlogPosts).FirstOrDefaultAsync(t => t.Id == tagId);
+                Tag? tag = await _context.Tags.Include(t => t.BlogPosts).ThenInclude(b=>b.Category).FirstOrDefaultAsync(t => t.Id == tagId);
                 return tag!;
             }
             catch (Exception)
@@ -286,9 +286,18 @@ namespace JABlog.Services
             throw new NotImplementedException();
         }
 
-        public Task UpdateTagAsync(Tag tag)
+        public async Task UpdateTagAsync(Tag tag)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _context.Update(tag);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public Task AddTagsToBlogPostAsync(IEnumerable<int> tagIds, int blogPostId)

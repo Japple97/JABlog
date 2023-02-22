@@ -39,6 +39,7 @@ namespace JABlog.Controllers
         }
 
         // GET: Categories/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int id, int? pageNum)
         {
             if ( _context.Categories == null)

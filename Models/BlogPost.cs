@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace JABlog.Models
 {
@@ -47,12 +49,15 @@ namespace JABlog.Models
         public int CategoryId { get; set; }
 
         // navigation properties
+        [JsonIgnore]
         public virtual Category? Category { get; set; }
 
         // Many-to-Many
+        [JsonIgnore]
         public virtual ICollection<Tag> Tags { get; set; } = new HashSet<Tag>();
 
         // 1-to-Many 
+        [JsonIgnore]
         public virtual ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
 
 

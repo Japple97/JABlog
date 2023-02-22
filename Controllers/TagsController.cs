@@ -30,22 +30,22 @@ namespace JABlog.Controllers
         // GET: Tags
         public async Task<IActionResult> Index()
         {
+            IEnumerable<Tag> model = await _blogPostService.GetAllTagsAsync();
 
 
-            return _context.Tags != null ? 
-                          View(await _context.Tags.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Tags'  is null.");
+            return View(model);
         }
 
         // GET: Tags/Details/5
-        public async Task<IActionResult> Details(int id, int? pageNum)
+        [AllowAnonymous]
+        public async Task<IActionResult> Details(int? id, int? pageNum)
         {
-            if (_context.Tags == null)
+            if (id == null || _context.Tags == null)
             {
                 return NotFound();
             }
 
-            var tag = await _blogPostService.GetTagByIdAsync(id);
+            Tag tag = await _blogPostService.GetTagByIdAsync(id.Value);
             if (tag == null)
             {
                 return NotFound();
@@ -80,12 +80,12 @@ namespace JABlog.Controllers
         // GET: Tags/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Tags == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var tag = await _context.Tags.FindAsync(id);
+            Tag tag = await _blogPostService.GetTagByIdAsync(id.Value);
             if (tag == null)
             {
                 return NotFound();
@@ -109,8 +109,7 @@ namespace JABlog.Controllers
             {
                 try
                 {
-                    _context.Update(tag);
-                    await _context.SaveChangesAsync();
+                   await _blogPostService.UpdateTagAsync(tag);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -136,8 +135,7 @@ namespace JABlog.Controllers
                 return NotFound();
             }
 
-            var tag = await _context.Tags
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Tag tag = await _blogPostService.GetTagByIdAsync(id.Value);
             if (tag == null)
             {
                 return NotFound();

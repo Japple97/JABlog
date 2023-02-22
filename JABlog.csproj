@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-JABlog-aaa26fac-2235-41bf-b42f-9cb65c984920</UserSecretsId>
+	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>.</DockerfileContext>
   </PropertyGroup>
@@ -13,11 +14,15 @@
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.3" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.4" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="X.PagedList" Version="8.4.6" />
     <PackageReference Include="X.PagedList.Mvc.Core" Version="8.4.5" />
   </ItemGroup>
