@@ -35,8 +35,9 @@ namespace JABlog.Controllers
             return View(model);
         }
 
-        public IActionResult ContactMe()
+        public IActionResult ContactMe(string? swalMessage = null)
         {
+            ViewData["SwalMessage"] = swalMessage;
             return View();
         }
 
