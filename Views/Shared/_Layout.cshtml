@@ -67,7 +67,7 @@
                 <div class="row justify-content-between align-items-center">
                     <div class="col-xl-3 col-lg-3 col-md-4 col-sm-3 col-12">
                         <div class="logo">
-                            <a href="index.html">
+                            <a asp-controller="Home" asp-action="Index">
                                 <img class="dark-logo" src="~/assets/images/logo/logo-black.png" alt="Blogar logo">
                                 <img class="light-logo" src="~/assets/images/logo/logo-white2.png" alt="Blogar logo">
                             </a>
@@ -296,14 +296,14 @@
                         <div class="col-lg-9 col-md-12">
                             <div class="copyright-left">
                                 <div class="logo">
-                                    <a href="index.html">
+                                    <a asp-action="Index" asp-controller="Home">
                                         <img class="dark-logo" src="~/assets/images/logo/logo-black.png" alt="Logo Images">
                                         <img class="light-logo" src="~/assets/images/logo/logo-white2.png" alt="Logo Images">
                                     </a>
                                 </div>
                                 <ul class="mainmenu justify-content-start">
                                     <li>
-                                        <a class="hover-flip-item-wrapper" href="#">
+                                        <a class="hover-flip-item-wrapper" asp-action="ContactMe" asp-controller="Home">
                                             <span class="hover-flip-item">
                                                 <span data-text="Contact Me">Contact Me</span>
                                             </span>
