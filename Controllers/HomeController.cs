@@ -31,6 +31,11 @@ namespace JABlog.Controllers
             return View(model);
         }
 
+        public IActionResult ContactMe()
+        {
+            return View();
+        }
+
         public IActionResult SearchIndex(string? searchString, int? pageNum)
         {
             int pageSize = 5;
