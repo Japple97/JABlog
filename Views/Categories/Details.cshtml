@@ -15,8 +15,6 @@
     IPagedList<BlogPost> pageOfPosts = Model.BlogPosts.Where(b=>b.IsPublished == true && b.IsDeleted == false).ToPagedList(pageNum, pageSize);
 }
 
-<h1>@Model.Name Category</h1>
-
 <!-- Start Author Area  -->
 <div class="axil-author-area axil-author-banner bg-color-grey">
     <div class="container">
