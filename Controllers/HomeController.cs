@@ -1,6 +1,8 @@
 ﻿using JABlog.Data;
 using JABlog.Models;
+using JABlog.Services;
 using JABlog.Services.Interfaces;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -13,12 +15,14 @@ namespace JABlog.Controllers
      
         private readonly ILogger<HomeController> _logger;
         private readonly IBlogPostService _blogPostService;
+        private readonly IEmailSender _emailService;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, IBlogPostService blogPostService)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, IBlogPostService blogPostService, IEmailSender emailService)
         {
            
             _logger = logger;
             _blogPostService = blogPostService;
+            _emailService = emailService;
         }
 
         public async Task<IActionResult> Index(int? pageNum)
@@ -34,6 +38,31 @@ namespace JABlog.Controllers
         public IActionResult ContactMe()
         {
             return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ContactMe(EmailData emailData)
+        {
+            if (ModelState.IsValid)
+            {
+                string? swalMessage = string.Empty;
+                try
+                {
+                    await _emailService.SendEmailAsync(emailData.EmailAddress!,
+                                                       emailData.EmailSubject!,
+                                                       emailData.EmailBody!);
+                    swalMessage = "Your email has been sent.";
+                    return RedirectToAction(nameof(ContactMe), new { swalMessage } );
+                }
+                catch (Exception)
+                {
+                    swalMessage = "Error: Email Send Failed!";
+                    return RedirectToAction(nameof(ContactMe), new { swalMessage });
+                    throw;
+                }
+            }
+            return View(emailData);
         }
 
         public IActionResult SearchIndex(string? searchString, int? pageNum)

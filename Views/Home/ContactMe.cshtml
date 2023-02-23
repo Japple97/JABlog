@@ -1,12 +1,12 @@
-﻿@model IPagedList<JABlog.Models.BlogPost>
+﻿@model JABlog.Models.EmailData
 @using JABlog.Enums;
 @using JABlog.Services.Interfaces
-@using X.PagedList;
-@using X.PagedList.Mvc.Core;
-@using X.PagedList.Web.Common;
+@using JABlog.Services
+@using Microsoft.AspNetCore.Identity.UI.Services;
 
 @inject IImageService _ImageService
 @inject IBlogPostService _blogPostService
+@inject IEmailSender _emailService
 
 
 
@@ -17,7 +17,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="inner">
-                            <h1 class="title">Contact Us</h1>
+                            <h1 class="title">Contact Me</h1>
                             <p class="description">Wherever &#38; whenever you need us. We are here for you – contact us for all your support needs.<br /> be it technical, general queries or information support.</p>
                         </div>
                     </div>
@@ -42,34 +42,34 @@
                             <div class="axil-section-gapTop axil-contact-form-area">
                                 <h4 class="title mb--10">Send Us a Message</h4>
                                 <p class="b3 mb--30">Your email address will not be published. All the fields are required.</p>
-                                <form id="contact-form" method="POST" action="mail.php" class="axil-contact-form contact-form--1 row">
+                                <form asp-action="ContactMe" asp-controller="Home" method="post" class="contact-form--1 row">
                                     <div class="col-lg-4 col-md-4 col-12">
                                         <div class="form-group">
-                                            <label for="contact-name">Your Name</label>
-                                            <input name="contact-name" id="contact-name" type="text">
+                                            <label asp-for="@Model.FullName">Your Name</label>
+                                            <input asp-for="@Model.FullName" class="form-control" type="text">
                                         </div>
-                                    </div>
-                                    <div class="col-lg-4 col-md-4 col-12">
-                                        <div class="form-group">
-                                            <label for="contact-phone">Phone</label>
-                                            <input type="text" name="contact-phone" id="contact-phone">
-                                        </div>
-                                    </div>
+                                    </div>                                    
                                     <div class="col-lg-4 col-md-4 col-12">
                                         <div class="form-group">
                                             <label>Your Email</label>
-                                            <input for="contact-email" name="contact-email" id="contact-email" type="email">
+                                            <input asp-for="@Model.EmailAddress" class="form-control" type="email">
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <label for="contact-message">Your Message</label>
-                                            <textarea name="contact-message" id="contact-message"></textarea>
+                                            <label asp-for="@Model.EmailSubject">Subject</label>
+                                            <input type="text" asp-for="EmailSubject" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label asp-for="@Model.EmailBody">Your Message</label>
+                                            <textarea class="form-control" asp-for="@Model.EmailBody" rows="10"></textarea>
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-submit">
-                                            <button name="submit" type="submit" id="submit" class="axil-button button-rounded btn-primary">Submit</button>
+                                            <button type="submit" class="axil-button button-rounded btn-primary">Send Email</button>
                                         </div>
                                     </div>
                                 </form>
@@ -92,4 +92,3 @@
         <!-- End Back To Top  -->
 
     </div>
-
