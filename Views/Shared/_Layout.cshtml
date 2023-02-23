@@ -155,7 +155,7 @@
                                                 <img src="@_ImageService.ConvertByteArrayToFile(blogUser!.ImageData!,blogUser!.ImageType!,(int)DefaultImage.BlogUserImage)" alt="">
                                                 <span class="status online"></span>
                                             </span>
-                                            <span>@User.Identity.Name</span>
+                                            <span>@blogUser.FullName</span>
                                         </a>
                                         @if (User.Identity.IsAuthenticated)
                                         {
