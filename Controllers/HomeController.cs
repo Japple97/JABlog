@@ -25,8 +25,9 @@ namespace JABlog.Controllers
             _emailService = emailService;
         }
 
-        public async Task<IActionResult> Index(int? pageNum)
+        public async Task<IActionResult> Index(int? pageNum, string? swalMessage = null)
         {
+            ViewData["SwalMessage"] = swalMessage;
             int pageSize = 3;
             int page = pageNum ?? 1;
             
@@ -56,14 +57,14 @@ namespace JABlog.Controllers
                                                        emailData.EmailSubject!,
                                                        emailData.EmailBody!);
                     swalMessage = "Your email has been sent.";
-                    return RedirectToAction(nameof(ContactMe), new { swalMessage } );
+                    return RedirectToAction(nameof(Index), new { swalMessage } );
                 }
                 catch (Exception e)
                 {
                     swalMessage = "Error: Email Send Failed!";
                     Console.WriteLine(e.Message);
                     Console.WriteLine(e.StackTrace);
-                    return RedirectToAction(nameof(ContactMe), new { swalMessage });
+                    return RedirectToAction(nameof(Index), new { swalMessage });
                     throw;
                 }
             }
