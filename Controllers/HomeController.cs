@@ -58,9 +58,11 @@ namespace JABlog.Controllers
                     swalMessage = "Your email has been sent.";
                     return RedirectToAction(nameof(ContactMe), new { swalMessage } );
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     swalMessage = "Error: Email Send Failed!";
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine(e.StackTrace);
                     return RedirectToAction(nameof(ContactMe), new { swalMessage });
                     throw;
                 }
