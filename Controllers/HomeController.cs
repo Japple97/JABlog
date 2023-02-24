@@ -43,14 +43,14 @@ namespace JABlog.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ContactMe(EmailData emailData)
+        public async Task<IActionResult> EmailMe (EmailData emailData)
         {
             if (ModelState.IsValid)
             {
                 string? swalMessage = string.Empty;
                 try
                 {
-                    await _emailService.SendEmailAsync(emailData.EmailAddress!,
+                    await _emailService.SendEmailAsync("ja999dev@gmail.com",
                                                        emailData.EmailSubject!,
                                                        emailData.EmailBody!);
                     swalMessage = "Your email has been sent.";
