@@ -50,7 +50,9 @@ namespace JABlog.Controllers
                 string? swalMessage = string.Empty;
                 try
                 {
-                    await _emailService.SendEmailAsync("ja999dev@gmail.com",
+                    emailData.EmailBody = ($"""<strong>{emailData.FullName}</strong> sent a message:<br><br>{emailData.EmailBody}<br><br><strong>Their email is:<a href="mailto:{emailData.EmailAddress}">{emailData.EmailAddress}</a></strong>""");
+              
+                    await  _emailService.SendEmailAsync("ja999dev@gmail.com",
                                                        emailData.EmailSubject!,
                                                        emailData.EmailBody!);
                     swalMessage = "Your email has been sent.";
